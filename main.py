@@ -61,6 +61,8 @@ class LoginModel(BaseModel):
     mobile: str = ""
     code: str = ""
     ck: Union[str, None] = ""
+    user_id: Union[str, None] = ""
+    bot_id: Union[str, None] = ""
 
 
 class AuthModel(BaseModel):
@@ -75,7 +77,7 @@ class TokenModel(BaseModel):
 @waves_router.post("/token", response_model=TokenModel, status_code=200)
 async def generate_token(auth: AuthModel):
     _token = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
-    cache.set(_token, LoginModel())
+    cache.set(_token, LoginModel(**auth.dict()))
     return {"token": _token}
 
 
@@ -84,7 +86,7 @@ async def verify_html(token: str):
     m = cache.get(token)
     template_name = "index.html" if m else "404.html"
     template = templates.get_template(template_name)
-    return HTMLResponse(template.render(auth=token) if m else template.render())
+    return HTMLResponse(template.render(auth=token, userId=m.user_id) if m else template.render())
 
 
 @waves_router.post("/login")
@@ -114,9 +116,9 @@ app.include_router(waves_router)
 
 
 async def kuro_login(mobile: str, code: str):
-    login_url = "https://api.kurobbs.com/user/sdkLogin"
+    login_url = "https://api.kurobbs.com/user/sdkLoginForH5"
     headers = {
-        "source": "android",
+        "source": "h5",
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         "devCode": ""
     }
