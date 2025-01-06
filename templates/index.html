@@ -338,7 +338,7 @@
                 url: 'https://api.kurobbs.com/user/getSmsCodeForH5',
                 type: 'POST',
                 data: {"mobile": phoneInput.value, "geeTestData": JSON.stringify(result)},
-                headers: {"devcode": "", "source": "h5"},
+                headers: {"devcode": generateRandomString(), "source": "h5"},
                 success: res => alert(res.success ? '验证码已发送' : '验证码发送失败 : ' + res.msg),
                 error: () => alert('请求出错，请检查网络连接')
             });
@@ -431,6 +431,14 @@
     }
 
     window.addEventListener('load', loadBackgroundImage);
+
+    function generateRandomString() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return Array(32)
+            .fill(0)
+            .map(() => chars.charAt(Math.floor(Math.random() * chars.length)))
+            .join('');
+    }
 </script>
 </body>
 </html>
