@@ -1,13 +1,38 @@
-FROM python:3.10
+# Use Python slim image as base
+FROM python:3.10-slim
 
-RUN useradd -m -u 1000 user
-USER user
-ENV PATH="/home/user/.local/bin:$PATH"
+# Install build dependencies and clean up in one layer
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir --upgrade pip setuptools wheel
 
+# Set working directory
 WORKDIR /app
 
-COPY --chown=user ./requirements.txt requirements.txt
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+# Copy project files
+COPY . /app/
 
-COPY --chown=user . /app
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir . \
+    && apt-get purge -y gcc python3-dev \
+    && apt-get autoremove -y
+
+# Create non-root user for security
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Expose port
+EXPOSE 7860
+
+# Set environment variables
+ENV HOST=0.0.0.0
+ENV PORT=7860
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Run the application
+CMD ["uvicorn", "ww_login.main:app", "--host", "0.0.0.0", "--port", "7860"]

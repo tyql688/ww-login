@@ -1,0 +1,22 @@
+{
+  "python.languageServer": "None",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/app"
+  ],
+  "isort.args": [
+    "--profile",
+    "black"
+  ],
+  "basedpyright.analysis.typeCheckingMode": "basic",
+  "basedpyright.analysis.extraPaths": [
+    "${workspaceFolder}/gsuid_core"
+  ]
+}
