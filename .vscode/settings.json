@@ -1,0 +1,15 @@
+{
+  "python.languageServer": "None",
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/ww_login"
+  ],
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    }
+  }
+}
