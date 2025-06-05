@@ -1,10 +1,11 @@
-from typing import Optional
+import uuid
+from typing import Optional, Union
 
 import httpx
 from httpx import HTTPError
 
 
-async def kuro_login(mobile: str, code: str) -> Optional[str]:
+async def kuro_login(mobile: str, code: str) -> Union[Optional[str], Optional[str]]:
     """
     Login to Kuro API with mobile and verification code.
 
@@ -15,13 +16,14 @@ async def kuro_login(mobile: str, code: str) -> Optional[str]:
     Returns:
         str: Authentication token if successful, None otherwise
     """
-    login_url = "https://api.kurobbs.com/user/sdkLoginForH5"
+    login_url = "https://api.kurobbs.com/user/sdkLogin"
     headers = {
-        "source": "h5",
+        "source": "ios",
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
         "devCode": "",
     }
-    data = {"mobile": mobile, "code": code}
+    did = str(uuid.uuid4()).upper()
+    data = {"mobile": mobile, "code": code, "devCode": did}
 
     try:
         async with httpx.AsyncClient() as client:
@@ -30,12 +32,12 @@ async def kuro_login(mobile: str, code: str) -> Optional[str]:
             result = res.json()
 
             if not isinstance(result, dict):
-                return None
+                return None, None
 
             if result.get("code") != 200 or not result.get("data"):
-                return None
+                return None, None
 
-            return result.get("data", {}).get("token")
+            return result.get("data", {}).get("token"), did
 
     except (HTTPError, ValueError):
-        return None
+        return None, None

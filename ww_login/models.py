@@ -8,6 +8,7 @@ class LoginModel(BaseModel):
     mobile: str = ""
     code: str = ""
     ck: Union[str, None] = ""
+    did: Union[str, None] = ""
     user_id: Union[str, None] = ""
     bot_id: Union[str, None] = ""
 

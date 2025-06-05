@@ -46,10 +46,11 @@ async def waves_login(data: LoginModel):
     temp = cache.get(data.auth)
     if temp is None:
         return {"success": False, "msg": "登录超时"}
-    ck = await kuro_login(data.mobile, data.code)
+    ck, did = await kuro_login(data.mobile, data.code)
     if not ck:
         return {"success": False, "msg": "验证码无效"}
     data.ck = ck
+    data.did = did
     cache.set(data.auth, data)
     return {"success": True}
 
